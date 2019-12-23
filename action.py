@@ -13,6 +13,10 @@ print("vocab: ", vocab)
 
 weights = [0 for _ in range(len(vocab))]
 out = open('./out.GENERATED', 'w')
+# How to make the weights go through 
+# What kind of input is the target? 
+# What kind of input is being adjusted for?
+# How does the algorithm read data, is it using a LSTM?
 
 def generateHTMLAction(target):
     #print("generating action: ", target)
