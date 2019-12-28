@@ -3,7 +3,7 @@
 # This is encoded as a step into the NN
 
 import numpy as np
-
+import random
 
 vocab = []
 with open('./vocab.txt', 'r') as f:
@@ -21,9 +21,8 @@ actions = [
 
 vocab_weights = [0 for _ in range(len(vocab))]
 action_weights = [0 for _ in range(len(actions))]
-#out = open('./out.GENERATED', 'w') # 'a' = append mode
 blankFile = open('./blank.html', 'r')
-out = []
+out = '' #out = []
 history = []
 # How to make the weights go through 
 # What kind of input is the target? 
@@ -32,11 +31,11 @@ history = []
 
 def generateHTMLAction(target):
     #print("generating action: ", target)
-    v = vocab[np.random.randint(0, len(vocab))]
+    v = selectVocab()
     #print(v)
     a = selectAction() #TODO take in parameter of the whole file to see where the action should be inserted
     l = selectLocation(v, a)
-    css = createCSSForAction(v)
+    css = createCSSForAction(v) # ''
     #print("css 2: ", css)
     performAction(v, css, a, l)
 
@@ -44,6 +43,10 @@ def generateHTMLAction(target):
     # Edit the file
     # Track the action so we know what was done, and understand that action
     # Use a LSTM to process the data
+
+def selectVocab():
+    v = vocab[np.random.randint(0, len(vocab))]
+    return v
 
 def selectAction():
     a = np.random.randint(0, 2)
@@ -61,10 +64,36 @@ def selectLocation(v, actionType):
 
 # Perform an action using vocab, an action, and a location to perform it at
 def performAction(v, css, a, l):
-    #print("performing action")
-    #out.write("<{}>Generated {}</{}>\n".format(v, v, v))
-    out.append("<{} {}>Generated {}</{}>".format(v, css, v, v))
+    global out
+    #out.append("<{} {}>Generated {}</{}>".format(v, css, v, v))
+    if a == 0:
+        # INSERT
+        indexes = findAllIndexes('>',out)
+        #print("indexes: ", indexes)
+        randIndex = random.choice(indexes)
+        #print("inserting at random index: ", randIndex) 
+        toInsert = ''
+        if v == 'hr' or v == 'input':
+            toInsert = "<{} {} />".format(v, css, v.upper(), v)
+        else:
+            toInsert = "<{} {}>{}</{}>".format(v, css, v.upper(), v)
+        out = out[:randIndex] + toInsert + out[randIndex:]
+        
+        #print(out)
+        #print('---------------------')
     history.append("{}_{}_{}_{}".format(v,css,a,l))
+
+def findAllIndexes(searchStr, inputStr):
+    ll = [0]
+    length = len(inputStr)
+    index = 0
+    while index < length:
+        i = inputStr.find(searchStr, index)
+        if i == -1:
+            return ll
+        ll.append(i + 1)
+        index = i + 1
+    return ll
 
 # Generates inline css to be used
 def createCSSForAction(v):
@@ -92,13 +121,11 @@ def getCSSValue(s):
         return ['absolute','relative','fixed'][np.random.randint(0, 3)]
 
 def displayHTMLFile():
+    global out
     html = blankFile.readlines()
-    #print("out: ", html)
-    #contents = out.readlines()
-    html.insert(7, ''.join(out))
-    print(html)
-    del out[:]
-    #out = []
+    html.insert(7, out) #''.join(out)
+    #print(html)
+    #del out[:]
+    out = ''
     return html
-    #out[:] = []
         
