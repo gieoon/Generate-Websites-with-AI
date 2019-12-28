@@ -45,7 +45,7 @@ def helloWorld():
 
         if count % HUMAN_INTERVENTION == 0:
             target = humanIntervention()
-    print("target: ", ''.join(target))
+    #print("target: ", ''.join(target))
     return ''.join(target)
 
 @socketio.on('message')

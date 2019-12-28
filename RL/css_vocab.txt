@@ -1,0 +1,6 @@
+color
+width
+height
+display
+position
+background-color

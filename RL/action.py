@@ -9,8 +9,10 @@ vocab = []
 with open('./vocab.txt', 'r') as f:
     for line in f:
         vocab.append(line.strip())
-
-print("vocab: ", vocab)
+cssVocab = [] 
+with open('./css_vocab.txt','r') as f:
+    for line in f:
+        cssVocab.append(line.strip())
 
 actions = [
     'INSERT',
@@ -34,7 +36,9 @@ def generateHTMLAction(target):
     #print(v)
     a = selectAction() #TODO take in parameter of the whole file to see where the action should be inserted
     l = selectLocation(v, a)
-    performAction(v, a, l)
+    css = createCSSForAction(v)
+    #print("css 2: ", css)
+    performAction(v, css, a, l)
 
     # Increment the average of that action
     # Edit the file
@@ -56,20 +60,45 @@ def selectLocation(v, actionType):
 # When a human selects an action, then increase the importance of all of the weights that the human selected, then continue
 
 # Perform an action using vocab, an action, and a location to perform it at
-def performAction(v, a, l):
-    print("performing action")
+def performAction(v, css, a, l):
+    #print("performing action")
     #out.write("<{}>Generated {}</{}>\n".format(v, v, v))
-    out.append("<{}>Generated {}</{}>\n".format(v, v, v))
-    history.append("{}-{}-{}".format(v,a,l))
+    out.append("<{} {}>Generated {}</{}>".format(v, css, v, v))
+    history.append("{}_{}_{}_{}".format(v,css,a,l))
 
+# Generates inline css to be used
+def createCSSForAction(v):
+    # generate based on history
+    noOfStyles = np.random.randint(0, len(cssVocab))
+    res = ''
+    for i in range(noOfStyles):
+        s = cssVocab[np.random.randint(0, len(cssVocab))]
+        value = getCSSValue(s)
+        res += "{}:{};".format(s, value)
+    
+    #print("creating css 1: ", res)
+    return 'style="{}"'.format(res)
+
+def getCSSValue(s):
+    if s == 'color' or s == 'background-color':
+        return ['blue','green','yellow','red'][np.random.randint(0, 3)]
+    elif s == 'width':
+        return str(np.random.randint(1, 100)) + 'vw'
+    elif s == 'height':
+        return str(np.random.randint(1, 100)) + 'vh'
+    elif s == 'display':
+        return ['flex','inline-block','block'][np.random.randint(0, 3)]
+    elif s == 'position':
+        return ['absolute','relative','fixed'][np.random.randint(0, 3)]
 
 def displayHTMLFile():
     html = blankFile.readlines()
-    print("out: ", html)
+    #print("out: ", html)
     #contents = out.readlines()
     html.insert(7, ''.join(out))
     print(html)
     del out[:]
+    #out = []
     return html
     #out[:] = []
         
