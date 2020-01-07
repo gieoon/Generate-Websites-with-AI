@@ -22,6 +22,24 @@ There are many ways of treating this problem, which is what makes it fun
 # Similar areas
 There are other areas that are similar in trying to generate websites, but most of these have not formed complete solution, or at least not an open-source one. That's why I think this is something interesting to work on, and would value your input
 
+
+## Downsampling Idea (Generator with feedback)
+We can create a human-in-the-loop interaction by providing partial feedback to downsample code and then regenerate upsampled code from the downsampled one. Like this, we can continuously regenerate code and upsample it.
+- Scrape 10,000 websites and create a dataset for the downsampled site and the site.
+- Train a seq2seq generator to generate upsampled HTML from downsampled HTML.
+
+- A downsampler will convert all HTML into a basic HTML skeleton using a predefined & randomized formula
+- A seq2seq generator trained on upsampled HTML will then re-upsample this.
+- The human is given two generated samples to select one from.
+- The sample chosen by the human is downsampled and fed back into the NN.
+- When the human is happy, they select 'Done' and they finish the product.
+
+## GAN idea
+- Scrape 10,000 website code, and get a GAN to generate code like this.
+
+- Scrape the websites and process the data to be useful properly.
+
 ## Sources
 - [FloydHub] (https://blog.floydhub.com/an-introduction-to-q-learning-reinforcement-learning/)
 - [Amunategui](https://amunategui.github.io/reinforcement-learning/index.html)
+http://cs231n.stanford.edu/reports/2017/pdfs/121.pdf

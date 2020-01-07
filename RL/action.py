@@ -124,8 +124,9 @@ def displayHTMLFile():
     global out
     html = blankFile.readlines()
     html.insert(7, out) #''.join(out)
-    #print(html)
+    #print(history)
+	#print(html)
     #del out[:]
     out = ''
-    return html
+    return html, history
         
